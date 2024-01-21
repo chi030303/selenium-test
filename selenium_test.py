@@ -223,7 +223,10 @@ if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Usage: python3 selenium_test.py <日期> <货币代码>")
     else:
-        # 先对输入信息进行判断，如果输入信息无误，再继续操作
+        # 爬取货币名称和货币代号，并存入数据库
+        result = crawl_currency_data('https://www.11meigui.com/tools/currency')
+        insert_currency_data(result)
+        # 对输入信息进行判断，如果输入信息无误，再继续操作
         date_input = sys.argv[1]
         try:
             formatted_input_date = datetime.strptime(date_input, "%Y%m%d").strftime("%Y-%m-%d")
@@ -231,9 +234,5 @@ if __name__ == "__main__":
             print("错误：日期格式无效。请使用YYYYMMDD格式的日期。")
         currency_code_input = sys.argv[2].upper()  # 转换为大写
         currency_name = get_currency_name_by_code(currency_code_input)
-
-        # 爬取货币名称和货币代号，并存入数据库
-        result = crawl_currency_data('https://www.11meigui.com/tools/currency')
-        insert_currency_data(result)
 
         get_value("https://www.boc.cn/sourcedb/whpj/",formatted_input_date, currency_name)
